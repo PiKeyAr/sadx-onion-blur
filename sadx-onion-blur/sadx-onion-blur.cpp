@@ -45,6 +45,24 @@ static void __cdecl njAction_Onion(NJS_ACTION* action, float frame)
 	GlobalSpriteColor = color_orig;
 }
 
+static void __cdecl njAction_KnucklesWrapper(NJS_ACTION* action, float frame)
+{
+	const NJS_ARGB color_orig = GlobalSpriteColor;
+	const uint32_t control_3d_orig = _nj_control_3d_flag_;
+
+	_nj_control_3d_flag_ |= NJD_CONTROL_3D_CONSTANT_ATTR | NJD_CONTROL_3D_CONSTANT_MATERIAL;
+
+	BackupConstantAttr();
+	AddConstantAttr(0, NJD_FLAG_USE_ALPHA);
+	njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
+	njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_ONE);
+	SetMaterialAndSpriteColor_Float(0.25f, 1.0, 1.0, 1.0);
+	njAction_Queue(action, frame, QueuedModelFlagsB_EnableZWrite);
+	RestoreConstantAttr();
+	_nj_control_3d_flag_ = control_3d_orig;
+	GlobalSpriteColor = color_orig;
+}
+
 static const void* loc_494400 = reinterpret_cast<const void*>(0x494400);
 
 void __cdecl sub_494400_o(int a1, CharObj2* a2)
@@ -254,6 +272,9 @@ extern "C"
 		WriteCall(reinterpret_cast<void*>(0x00461156), njAction_TailsWrapper);
 		WriteData<5>(reinterpret_cast<void*>(0x004610AF), 0x90i8);
 		WriteData<5>(reinterpret_cast<void*>(0x004611A9), 0x90i8);
+
+		//Knuckles' motion blur
+		WriteCall(reinterpret_cast<void*>(0x00472626), &njAction_KnucklesWrapper);
 
 #ifdef _DEBUG
 		// For debugging - allows tail onion skin to be rendered while paused
