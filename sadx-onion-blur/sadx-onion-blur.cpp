@@ -50,8 +50,8 @@ static void __cdecl njAction_KnucklesWrapper(NJS_ACTION* action, float frame)
 	auto CharObj1PtrsThing = CharObj1Ptrs[0];
 	auto CharObj2PtrsThing = CharObj2Ptrs[0];
 	short CurrentAnimation = CharObj2PtrsThing->AnimationThing.Index;
-	if (CurrentAnimation == 13 || (CurrentAnimation == 14 && CharObj1PtrsThing->Status & (Status_Unknown1 | Status_Ground) )) njAction_Onion(action, frame);
-	else njAction(action, frame);
+	njAction(action, frame);
+	if (CurrentAnimation == 12 || CurrentAnimation == 13 || (CurrentAnimation == 14 && CharObj1PtrsThing->Status & (Status_Unknown1 | Status_Ground) )) njAction_Onion(action, frame);
 }
 
 static const void* loc_494400 = reinterpret_cast<const void*>(0x494400);
