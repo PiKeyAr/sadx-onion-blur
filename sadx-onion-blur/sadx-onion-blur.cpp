@@ -6,8 +6,6 @@ static bool tails_hack = false;
 
 HMODULE CHRMODELS = GetModuleHandle(L"CHRMODELS_orig");
 NJS_OBJECT **___MILES_OBJECTS = (NJS_OBJECT **)GetProcAddress(CHRMODELS, "___MILES_OBJECTS");
-DataPointer(NJS_ARGB, GlobalSpriteColor, 0x03AB9864);
-FunctionPointer(void, njAction_Queue, (NJS_ACTION *action, float frame, QueuedModelFlagsB flags), 0x00405470);
 
 static void __cdecl njAction_Onion(NJS_ACTION* action, float frame)
 {
@@ -20,10 +18,10 @@ static void __cdecl njAction_Onion(NJS_ACTION* action, float frame)
 
 	BackupConstantAttr();
 	AddConstantAttr(0, NJD_FLAG_USE_ALPHA);
-	njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
+	njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_ONE);
 	njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_ONE);
 
-	float alpha = 0.75f;
+	float alpha = 0.5f;
 
 	for (int i = 0; i < 2; ++i)
 	{
@@ -36,8 +34,7 @@ static void __cdecl njAction_Onion(NJS_ACTION* action, float frame)
 		{
 			frame = frame_count + frame;
 		}
-
-		njAction_Queue(action, frame, QueuedModelFlagsB_EnableZWrite);
+		njAction_Queue(action, frame, (QueuedModelFlagsB)0);
 	}
 
 	RestoreConstantAttr();
@@ -47,11 +44,11 @@ static void __cdecl njAction_Onion(NJS_ACTION* action, float frame)
 
 static void __cdecl njAction_KnucklesWrapper(NJS_ACTION* action, float frame)
 {
-	auto CharObj1PtrsThing = CharObj1Ptrs[0];
+	auto CharObj1PtrsThing = EntityData1Ptrs[0];
 	auto CharObj2PtrsThing = CharObj2Ptrs[0];
 	short CurrentAnimation = CharObj2PtrsThing->AnimationThing.Index;
 	njAction(action, frame);
-	if (CurrentAnimation == 12 || CurrentAnimation == 13 || (CurrentAnimation == 14 && CharObj1PtrsThing->Status & (Status_Unknown1 | Status_Ground) )) njAction_Onion(action, frame);
+	if (CurrentCharacter == Characters_Knuckles && ((CurrentAnimation == 12 || CurrentAnimation == 13 || (CurrentAnimation == 14 && CharObj1PtrsThing->Status & (Status_Unknown1 | Status_Ground) )))) njAction_Onion(action, frame);
 }
 
 static const void* loc_494400 = reinterpret_cast<const void*>(0x494400);
